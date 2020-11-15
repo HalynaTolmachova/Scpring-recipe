@@ -6,6 +6,7 @@ import springrecipe.demo.domain.Recipe;
 import springrecipe.demo.repositories.RecipeRepository;
 
 import java.util.HashSet;
+import java.util.Optional;
 import java.util.Set;
 @Slf4j
 @Service
@@ -22,5 +23,15 @@ public class RecipeServiceImpl implements RecipeService {
         recipeRepository.findAll().iterator().forEachRemaining(recipeSet::add);
         log.debug("im in the service");
         return recipeSet;
+    }
+
+    @Override
+    public Recipe findById(Long id){
+        Optional<Recipe> recipe = recipeRepository.findById(id);
+        if(!recipe.isPresent()){
+            throw new RuntimeException("Recipe is not in the list");
+        }else{
+            return recipe.get();
+        }
     }
 }
