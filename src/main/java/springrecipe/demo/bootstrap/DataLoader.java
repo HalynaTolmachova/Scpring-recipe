@@ -141,6 +141,9 @@ public class DataLoader implements ApplicationListener<ContextRefreshedEvent> {
                 "Read more: http://www.simplyrecipes.com/recipes/perfect_guacamole/#ixzz4jvoun5ws");
 
         guacamole.setNotes(guacamoleNotes);
+        guacamole.setSource("www.guacamole_source");
+        guacamole.setUrl("www.guacamole_url");
+        guacamole.setServing(12);
 
         guacamole.addIngredients(new Ingredient("ripe avocados", new BigDecimal(2), eachUom));
 
