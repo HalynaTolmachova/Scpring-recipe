@@ -5,9 +5,17 @@ import org.springframework.core.convert.converter.Converter;
 import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Component;
 import springrecipe.demo.commands.IngredientCommand;
+import springrecipe.demo.commands.UnitOfMeasureCommand;
 import springrecipe.demo.domain.Ingredient;
+import springrecipe.demo.domain.UnitOfMeasure;
+
 @Component
 public class IngredientToIngredientCommand implements Converter<Ingredient, IngredientCommand> {
+    private final UnitOfMeasureToUnitOfMeasureCommand unitOfMeasureToUnitOfMeasureCommand;
+
+    public IngredientToIngredientCommand(UnitOfMeasureToUnitOfMeasureCommand unitOfMeasureToUnitOfMeasureCommand) {
+        this.unitOfMeasureToUnitOfMeasureCommand = unitOfMeasureToUnitOfMeasureCommand;
+    }
     @Synchronized
     @Nullable
     @Override
@@ -19,8 +27,8 @@ public class IngredientToIngredientCommand implements Converter<Ingredient, Ingr
             ingredientCommand.setId(ingredient.getId());
             ingredientCommand.setDescription(ingredient.getDescription());
             ingredientCommand.setAmount(ingredient.getAmount());
-            ingredientCommand.setUnitOfMeasure(ingredient.getUnitOfMeasure());
-            return ingredientCommand;
+            ingredientCommand.setUnitOfMeasure(unitOfMeasureToUnitOfMeasureCommand.convert(ingredient.getUnitOfMeasure()));
+            return  ingredientCommand;
         }
     }
 }
