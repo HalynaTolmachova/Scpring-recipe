@@ -2,6 +2,7 @@ package springrecipe.demo.services;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import springrecipe.demo.commands.RecipeCommand;
 import springrecipe.demo.converters.RecipeCommandToRecipe;
 import springrecipe.demo.converters.RecipeToRecipeCommand;
@@ -43,11 +44,23 @@ public class RecipeServiceImpl implements RecipeService {
     }
 
     @Override
+    @Transactional
+    public RecipeCommand findCommandById(Long id) {
+        return recipeToRecipeCommand.convert(findById(id));
+    }
+
+    @Override
+    @Transactional
     public RecipeCommand saveRecipeCommand(RecipeCommand recipeCommand) {
         Recipe detachedRecipe = recipeCommandToRecipe.convert(recipeCommand);
         Recipe savedRecipe = recipeRepository.save(detachedRecipe);
         log.debug("Saved recipe "+ savedRecipe.getId());
         return recipeToRecipeCommand.convert(savedRecipe);
 
+    }
+
+    @Override
+    public void deleteById(Long id) {
+        recipeRepository.deleteById(id);
     }
 }

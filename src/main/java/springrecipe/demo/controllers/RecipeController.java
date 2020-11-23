@@ -1,11 +1,18 @@
 package springrecipe.demo.controllers;
 
+import lombok.extern.log4j.Log4j;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.ui.Model;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import springrecipe.demo.commands.RecipeCommand;
 import springrecipe.demo.services.RecipeService;
 
+import javax.persistence.PostUpdate;
+@Slf4j
 @Controller
 public class RecipeController {
 
@@ -14,11 +21,37 @@ public class RecipeController {
     public RecipeController(RecipeService recipeService) {
         this.recipeService = recipeService;
     }
-    @RequestMapping("recipe/show/{id}")
+    @RequestMapping("recipe/{id}/show")
     public String recipeIndex(@PathVariable Long id, Model model){
         model.addAttribute("recipe",recipeService.findById(id));
         return "recipe/show";
 
+    }
+
+    @RequestMapping("recipe/new")
+    public String newRecipe(Model model){
+        model.addAttribute("recipe", new RecipeCommand());
+        return "recipe/recipeform";
+    }
+
+    @PostMapping
+    @RequestMapping("recipe")
+    public String saveOrUpdate(@ModelAttribute RecipeCommand recipeCommand){
+    RecipeCommand savedReciveCommand = recipeService.saveRecipeCommand(recipeCommand);
+        return "redirect:/recipe/" + savedReciveCommand.getId()+"/show";
+    }
+
+    @RequestMapping("recipe/{id}/update")
+    public String updateRecipe(@PathVariable String id, Model model){
+        model.addAttribute("recipe", recipeService.findCommandById(Long.valueOf(id)));
+        return  "recipe/recipeform";
+    }
+
+    @RequestMapping("recipe/{id}/delete")
+    public String deleteById(@PathVariable String id){
+        log.debug("Recipe with id " + id +" is deleted");
+        recipeService.deleteById(Long.valueOf(id));
+        return "redirect:/";
     }
 
 }
