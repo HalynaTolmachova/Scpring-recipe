@@ -5,13 +5,13 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import springrecipe.demo.commands.IngredientCommand;
+import springrecipe.demo.converters.IngredientCommandToIngredient;
 import springrecipe.demo.converters.IngredientToIngredientCommand;
-import springrecipe.demo.converters.RecipeCommandToRecipe;
-import springrecipe.demo.converters.RecipeToRecipeCommand;
 import springrecipe.demo.converters.UnitOfMeasureToUnitOfMeasureCommand;
 import springrecipe.demo.domain.Ingredient;
 import springrecipe.demo.domain.Recipe;
 import springrecipe.demo.repositories.RecipeRepository;
+import springrecipe.demo.repositories.UnitOfMeasureRepository;
 
 import java.util.Optional;
 
@@ -24,7 +24,8 @@ class IngredientServiceImplTest {
 
     @Mock
     RecipeRepository recipeRepository;
-
+    IngredientCommandToIngredient ingredientCommandToIngredient;
+    UnitOfMeasureRepository unitOfMeasureRepository;
     IngredientService ingredientService;
 
     public IngredientServiceImplTest() {
@@ -34,7 +35,7 @@ class IngredientServiceImplTest {
     @BeforeEach
     void setUp() {
         MockitoAnnotations.initMocks(this);
-        ingredientService = new IngredientServiceImpl(ingredientToIngredientCommand, recipeRepository);
+        ingredientService = new IngredientServiceImpl( ingredientToIngredientCommand, recipeRepository, unitOfMeasureRepository,ingredientCommandToIngredient);
     }
 
     @Test

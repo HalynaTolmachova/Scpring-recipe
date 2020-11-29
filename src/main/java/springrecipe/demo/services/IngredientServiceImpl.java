@@ -3,10 +3,12 @@ package springrecipe.demo.services;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import springrecipe.demo.commands.IngredientCommand;
-import springrecipe.demo.commands.RecipeCommand;
+import springrecipe.demo.converters.IngredientCommandToIngredient;
 import springrecipe.demo.converters.IngredientToIngredientCommand;
+import springrecipe.demo.domain.Ingredient;
 import springrecipe.demo.domain.Recipe;
 import springrecipe.demo.repositories.RecipeRepository;
+import springrecipe.demo.repositories.UnitOfMeasureRepository;
 
 import java.util.Optional;
 
@@ -15,10 +17,15 @@ import java.util.Optional;
 public class IngredientServiceImpl implements IngredientService {
     private final IngredientToIngredientCommand ingredientToIngredientCommand;
     private final RecipeRepository recipeRepository;
+    private final UnitOfMeasureRepository unitOfMeasureRepository;
+    private final IngredientCommandToIngredient ingredientCommandToIngredient;
 
-    public IngredientServiceImpl(IngredientToIngredientCommand ingredientToIngredientCommand, RecipeRepository recipeRepository) {
+    public IngredientServiceImpl(IngredientToIngredientCommand ingredientToIngredientCommand, RecipeRepository recipeRepository, UnitOfMeasureRepository unitOfMeasureRepository, IngredientCommandToIngredient ingredientCommandToIngredient) {
         this.ingredientToIngredientCommand = ingredientToIngredientCommand;
+
         this.recipeRepository = recipeRepository;
+        this.unitOfMeasureRepository = unitOfMeasureRepository;
+        this.ingredientCommandToIngredient = ingredientCommandToIngredient;
     }
 
 
@@ -40,4 +47,36 @@ public class IngredientServiceImpl implements IngredientService {
         }
         return ingredientCommand.get();
     }
+
+    @Override
+    public IngredientCommand saveIngredientCommand(IngredientCommand ingredientCommand) {
+       Optional<Recipe>optionalRecipe = recipeRepository.findById(ingredientCommand.getRecipeId());
+       if(!optionalRecipe.isPresent()){
+           log.debug("Recipe is not present " +ingredientCommand.getRecipeId());
+           return  new IngredientCommand();
+       }else{
+            Recipe recipe = optionalRecipe.get();
+           Optional <Ingredient> optionalIngredient = recipe
+                   .getIngredients()
+                   .stream()
+                   .filter(ingredient -> ingredient.getId().equals(ingredientCommand.getId()))
+                   .findFirst();
+           if(optionalIngredient.isPresent()){
+               Ingredient ingredientFound = optionalIngredient.get();
+               ingredientFound.setDescription(ingredientCommand.getDescription());
+               ingredientFound.setAmount(ingredientCommand.getAmount());
+               ingredientFound.setUnitOfMeasure(unitOfMeasureRepository
+                       .findById(ingredientCommand.getUnitOfMeasure().getId())
+                       .orElseThrow(()->new RuntimeException("Unit of Measure not founf")));
+           }else {
+               recipe.addIngredients(ingredientCommandToIngredient.convert(ingredientCommand));
+           }
+            Recipe savedRecipe = recipeRepository.save(recipe);
+
+        return ingredientToIngredientCommand.convert(savedRecipe.getIngredients().stream()
+                            .filter(recipeIngredients->recipeIngredients.getId().equals(ingredientCommand.getId()))
+                            .findFirst()
+                            .get());
+      }
+}
 }

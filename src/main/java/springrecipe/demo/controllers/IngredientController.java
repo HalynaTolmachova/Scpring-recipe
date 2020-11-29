@@ -3,8 +3,11 @@ package springrecipe.demo.controllers;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import springrecipe.demo.commands.IngredientCommand;
 import springrecipe.demo.services.IngredientService;
 import springrecipe.demo.services.RecipeService;
 import springrecipe.demo.services.UnitOfMeasureService;
@@ -41,4 +44,13 @@ public class IngredientController {
         return "recipe/ingredient/ingredientform";
     }
 
+    @PostMapping("recipe/{recipeId}/ingredient")
+    public String saveOrUpdate(@ModelAttribute IngredientCommand command){
+        IngredientCommand savedCommand = ingredientService.saveIngredientCommand(command);
+
+        log.debug("saved receipe id:" + savedCommand.getRecipeId());
+        log.debug("saved ingredient id:" + savedCommand.getId());
+
+        return "redirect:/recipe/" + savedCommand.getRecipeId() + "/ingredient/" + savedCommand.getId() + "/show";
+    }
 }

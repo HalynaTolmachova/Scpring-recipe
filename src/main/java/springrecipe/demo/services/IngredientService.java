@@ -5,5 +5,5 @@ import springrecipe.demo.commands.RecipeCommand;
 
 public interface IngredientService {
     IngredientCommand findByRecipeIdAndIngredientId(Long recipeId, Long id);
-
+    IngredientCommand saveIngredientCommand (IngredientCommand ingredientCommand);
 }
