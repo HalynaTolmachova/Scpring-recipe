@@ -27,6 +27,9 @@
                 <div class="panel-heading">
                     <h1 class="panel-title">ingredients</h1>
                 </div>
+                <div class="col-md-1">
+                    <a class="btn btn-default" href="#" th:href="@{'/recipe/' + ${recipe.id} + '/ingredient/new'}" role="button">Create new</a>
+                </div>
                 <div class="panel-body">
                     <div class="table-responsive" th:if="${not #lists.isEmpty(recipe)}">
                         <table class="table table-hover ">
@@ -47,7 +50,7 @@
 
                                 <td><a href="#" th:href="@{'/recipe/' + ${recipe.id}+'/ingredient/' +${ingredients.id}+'/show'}">View</a></td>
                                 <td><a href="#" th:href="@{'/recipe/' + ${recipe.id}+'/ingredient/'+${ingredients.id}+'/update'}">Update</a></td>
-                                <td><a href="#" th:href="@{'/recipe/' + ${recipe.id}+'/delete'}">Delete</a></td>
+                                <td><a href="#" th:href="@{'/recipe/' + ${recipe.id}+'/ingredient/'+${ingredients.id}+'/delete'}">Delete</a></td>
 
                             </tr>
                         </table>
