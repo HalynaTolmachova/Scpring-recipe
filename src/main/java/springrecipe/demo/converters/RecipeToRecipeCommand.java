@@ -8,12 +8,12 @@ import springrecipe.demo.commands.RecipeCommand;
 import springrecipe.demo.domain.Recipe;
 @Component
 public class RecipeToRecipeCommand implements Converter<Recipe, RecipeCommand> {
-    private final CategoryToCategoryCommand categoryConveter;
+    private final CategoryToCategoryCommand categoryConverter;
     private final IngredientToIngredientCommand ingredientConverter;
     private final NotesToNotesCommand notesConverter;
 
-    public RecipeToRecipeCommand(CategoryToCategoryCommand categoryConveter, IngredientToIngredientCommand ingredientConverter, NotesToNotesCommand notesConverter) {
-        this.categoryConveter = categoryConveter;
+    public RecipeToRecipeCommand(CategoryToCategoryCommand categoryConverter, IngredientToIngredientCommand ingredientConverter, NotesToNotesCommand notesConverter) {
+        this.categoryConverter = categoryConverter;
         this.ingredientConverter = ingredientConverter;
         this.notesConverter = notesConverter;
     }
@@ -35,11 +35,12 @@ public class RecipeToRecipeCommand implements Converter<Recipe, RecipeCommand> {
         recipeCommand.setUrl(recipe.getUrl());
         recipeCommand.setDirections(recipe.getDirections());
         recipeCommand.setDifficulty(recipe.getDifficulty());
+        recipeCommand.setImage(recipe.getImage());
         recipeCommand.setNotes(notesConverter.convert(recipe.getNotes()));
 
         if(recipe.getCategories()!=null && recipe.getCategories().size()>0){
             recipe.getCategories()
-                    .forEach(category -> recipeCommand.getCategories().add(categoryConveter.convert(category)));
+                    .forEach(category -> recipeCommand.getCategories().add(categoryConverter.convert(category)));
         }
         if(recipe.getIngredients()!=null && recipe.getIngredients().size()>0){
             recipe.getIngredients()

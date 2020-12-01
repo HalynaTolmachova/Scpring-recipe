@@ -23,7 +23,6 @@ public class ImageServiceImpl implements ImageService {
            Recipe recipe = recipeRepository.findById(Long.valueOf(id)).get();
            Byte [] byteObject = new Byte[file.getBytes().length];
            int i =0;
-           log.debug("Error occured="+file.getBytes().length);
            for(byte b:file.getBytes()){
                byteObject[i++]=b;
            }
