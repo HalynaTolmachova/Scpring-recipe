@@ -7,6 +7,7 @@ import springrecipe.demo.commands.RecipeCommand;
 import springrecipe.demo.converters.RecipeCommandToRecipe;
 import springrecipe.demo.converters.RecipeToRecipeCommand;
 import springrecipe.demo.domain.Recipe;
+import springrecipe.demo.exceptions.NotFoundException;
 import springrecipe.demo.repositories.RecipeRepository;
 
 import java.util.HashSet;
@@ -37,7 +38,8 @@ public class RecipeServiceImpl implements RecipeService {
     public Recipe findById(Long id){
         Optional<Recipe> recipe = recipeRepository.findById(id);
         if(!recipe.isPresent()){
-            throw new RuntimeException("Recipe is not in the list");
+           // throw new RuntimeException("Recipe is not in the list");
+            throw new NotFoundException("Recipe is not in the list. For ID value: " + id.toString());
         }else{
             return recipe.get();
         }

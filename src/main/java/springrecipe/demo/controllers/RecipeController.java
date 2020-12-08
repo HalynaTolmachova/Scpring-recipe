@@ -2,10 +2,13 @@ package springrecipe.demo.controllers;
 
 import lombok.extern.log4j.Log4j;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.ui.Model;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.ModelAndView;
 import springrecipe.demo.commands.RecipeCommand;
+import springrecipe.demo.exceptions.NotFoundException;
 import springrecipe.demo.services.RecipeService;
 
 import javax.persistence.PostUpdate;
@@ -48,6 +51,17 @@ public class RecipeController {
         log.debug("Recipe with id " + id +" is deleted");
         recipeService.deleteById(Long.valueOf(id));
         return "redirect:/";
+    }
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    @ExceptionHandler(NotFoundException.class)
+    public ModelAndView notFoundError(Exception exception){
+        log.error("Page is not found");
+        log.error(exception.getMessage());
+        ModelAndView modelAndView = new ModelAndView();
+        modelAndView.setViewName("404error");
+        modelAndView.addObject("exception",exception);
+
+        return modelAndView;
     }
 
 }
